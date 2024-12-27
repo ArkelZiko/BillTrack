@@ -8,7 +8,7 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from "@/components/sheet"
+} from "@/components/ui/sheet"
 import { sidebarLinks } from "@/constants"
 import { cn } from "@/lib/utils"
 
