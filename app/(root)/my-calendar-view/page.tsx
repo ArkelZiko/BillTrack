@@ -1,9 +1,9 @@
 import React from 'react'
 
-const MyBanks = () => {
+const MyCalendarView = () => {
   return (
     <div>page</div>
   )
 }
 
-export default MyBanks
+export default MyCalendarView
