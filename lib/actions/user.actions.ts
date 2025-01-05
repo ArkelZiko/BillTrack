@@ -10,24 +10,23 @@ import { revalidatePath } from "next/cache";
 const {
   APPWRITE_DATABASE_ID: DATABASE_ID,
   APPWRITE_USER_COLLECTION_ID: USER_COLLECTION_ID,
-  APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION_ID,
 } = process.env;
 
-export const getUserInfo = async ({ userId }: getUserInfoProps) => {
-  try {
-    const { database } = await createAdminClient();
-
-    const user = await database.listDocuments(
-      DATABASE_ID!,
-      USER_COLLECTION_ID!,
-      [Query.equal('userId', [userId])]
-    )
-
-    return parseStringify(user.documents[0]);
-  } catch (error) {
-    console.log(error)
+export const getUserInfo = async ({ userid }: getUserInfoProps) => {
+    try {
+      const { database } = await createAdminClient();
+  
+      const user = await database.listDocuments(
+        DATABASE_ID!,
+        USER_COLLECTION_ID!,
+        [Query.equal('userid', [userid])]  // Changed from userId to userid
+      )
+  
+      return parseStringify(user.documents[0]);
+    } catch (error) {
+      console.log(error)
+    }
   }
-}
 
 export const signIn = async ({ email, password }: signInProps) => {
   try {
@@ -41,7 +40,7 @@ export const signIn = async ({ email, password }: signInProps) => {
       secure: true,
     });
 
-    const user = await getUserInfo({ userId: session.userId }) 
+    const user = await getUserInfo({ userid: session.userId }) 
 
     return parseStringify(user);
   } catch (error) {
@@ -52,42 +51,54 @@ export const signIn = async ({ email, password }: signInProps) => {
 export const signUp = async ({ password, ...userData }: SignUpParams) => {
     const { email, firstName, lastName } = userData;
   
-    let newUserAccount;
-  
     try {
       const { account, database } = await createAdminClient();
   
-      newUserAccount = await account.create(
+      // First check if user already exists
+      try {
+        await account.get();
+        throw new Error('User already exists');
+      } catch (error: any) {
+        // If error code is 401, user doesn't exist, which is what we want
+        if (error.code !== 401) {
+          throw error;
+        }
+      }
+  
+      const newUserAccount = await account.create(
         ID.unique(),
         email,
         password,
         `${firstName} ${lastName}`
       );
   
-      if (!newUserAccount) throw new Error("Error creating user");
+      if (!newUserAccount) throw new Error('Error creating user account');
   
       const newUser = await database.createDocument(
         DATABASE_ID!,
         USER_COLLECTION_ID!,
         ID.unique(),
         {
-          ...userData,
-          userId: newUserAccount.$id,
+          email,
+          firstName,
+          lastName,
+          userid: newUserAccount.$id,  // Matches database field name
         }
       );
   
       const session = await account.createEmailPasswordSession(email, password);
   
-      (await cookies()).set("appwrite-session", session.secret, {
-        path: "/",
+      (await cookies()).set('appwrite-session', session.secret, {
+        path: '/',
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: 'strict',
         secure: true,
       });
   
       return parseStringify(newUser);
-    } catch (error) {
-      console.error("Error", error);
+    } catch (error: any) {
+      console.error('SignUp Error:', error);
+      throw new Error(error?.message || 'Error during signup process');
     }
   };
 
@@ -96,7 +107,7 @@ export async function getLoggedInUser() {
     const { account } = await createSessionClient();
     const result = await account.get();
 
-    const user = await getUserInfo({ userId: result.$id})
+    const user = await getUserInfo({ userid: result.$id})
 
     return parseStringify(user);
   } catch (error) {

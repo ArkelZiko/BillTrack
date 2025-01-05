@@ -8,8 +8,8 @@ declare type SearchParamProps = {
 // ========================================
 
 declare type SignUpParams = {
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 };
@@ -22,105 +22,44 @@ declare type LoginUser = {
 declare type User = {
   $id: string;
   email: string;
-  userId: string;
+  userid: string;
   firstName: string;
   lastName: string;
-  name;
-  address1: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  dateOfBirth: string;
-  ssn: string;
 };
 
 declare type NewUserParams = {
-  userId: string;
+  userid: string;
   email: string;
-  name: string;
   password: string;
 };
 
-declare type Account = {
-  id: string;
-  availableBalance: number;
-  currentBalance: number;
-  officialName: string;
-  mask: string;
-  institutionId: string;
-  name: string;
-  type: string;
-  subtype: string;
-  appwriteItemId: string;
-  sharableId: string;
-};
 
-declare type Transaction = {
-  id: string;
-  $id: string;
-  name: string;
-  paymentChannel: string;
-  type: string;
-  accountId: string;
-  amount: number;
-  pending: boolean;
-  category: string;
-  date: string;
-  image: string;
-  type: string;
-  $createdAt: string;
-  channel: string;
-  senderBankId: string;
-  receiverBankId: string;
-};
+// declare type Transaction = {
+//   id: string;
+//   $id: string;
+//   name: string;
+//   paymentChannel: string;
+//   type: string;
+//   accountId: string;
+//   amount: number;
+//   pending: boolean;
+//   category: string;
+//   date: string;
+//   image: string;
+//   type: string;
+//   $createdAt: string;
+//   channel: string;
+//   senderBankId: string;
+//   receiverBankId: string;
+// };
 
-declare type Bank = {
-  $id: string;
-  accountId: string;
-  bankId: string;
-  accessToken: string;
-  fundingSourceUrl: string;
-  userId: string;
-  sharableId: string;
-};
-
-declare type AccountTypes =
-  | "depository"
-  | "credit"
-  | "loan "
-  | "investment"
-  | "other";
-
-declare type Category = "Food and Drink" | "Travel" | "Transfer";
+declare type Category = "Food & Drinks" | "Vehicle & Transportation" | "Music" | "Fitness & Health" | "Rent & Fees" | "Other"
 
 declare type CategoryCount = {
   name: string;
   count: number;
   totalCount: number;
 };
-
-declare type Receiver = {
-  firstName: string;
-  lastName: string;
-};
-
-declare type TransferParams = {
-  sourceFundingSourceUrl: string;
-  destinationFundingSourceUrl: string;
-  amount: string;
-};
-
-declare interface CreditCardProps {
-  account: Account;
-  userName: string;
-  showBalance?: boolean;
-}
-
-declare interface BankInfoProps {
-  account: Account;
-  appwriteItemId?: string;
-  type: "full" | "card";
-}
 
 declare interface HeaderBoxProps {
   type?: "title" | "greeting";
@@ -138,7 +77,6 @@ declare interface PageHeaderProps {
   bottomTitle: string;
   topDescription: string;
   bottomDescription: string;
-  connectBank?: boolean;
 }
 
 declare interface PaginationProps {
@@ -146,24 +84,11 @@ declare interface PaginationProps {
   totalPages: number;
 }
 
-// declare type User = sdk.Models.Document & {
-//   accountId: string;
-//   email: string;
-//   name: string;
-//   items: string[];
-//   accessToken: string;
-//   image: string;
-// };
 
 declare interface AuthFormProps {
   type: "sign-in" | "sign-up";
 }
 
-declare interface BankDropdownProps {
-  accounts: Account[];
-  setValue?: UseFormSetValue<any>;
-  otherStyles?: string;
-}
 
 declare interface BankTabItemProps {
   account: Account;
@@ -225,34 +150,13 @@ declare interface PaymentTransferFormProps {
 
 // Actions
 declare interface getAccountsProps {
-  userId: string;
+  userid: string;
 }
 
 declare interface getAccountProps {
   appwriteItemId: string;
 }
 
-declare interface getInstitutionProps {
-  institutionId: string;
-}
-
-declare interface getTransactionsProps {
-  accessToken: string;
-}
-
-declare interface CreateTransactionProps {
-  name: string;
-  amount: string;
-  senderId: string;
-  senderBankId: string;
-  receiverId: string;
-  receiverBankId: string;
-  email: string;
-}
-
-declare interface getTransactionsByBankIdProps {
-  bankId: string;
-}
 
 declare interface signInProps {
   email: string;
@@ -260,31 +164,44 @@ declare interface signInProps {
 }
 
 declare interface getUserInfoProps {
+userid: string;
+}
+
+declare type RecurringBill = {
+  category: string;
+  $id: string;
+  userid: string;
+  billId: string;
+  name: string;
+  amount: number;
+  nextPaymentDate: string;
+  frequency: "monthly" | "yearly" | "weekly" | "quarterly";
+  $createdAt: string;
+};
+
+// Update TransactionTableProps to handle RecurringBills
+declare interface TransactionTableProps {
+  transactions: RecurringBill[];
+}
+
+// Add specific props for recurring bills table
+declare interface RecurringBillsTableProps {
+  bills: RecurringBill[];
+}
+
+declare interface CreateRecurringBillProps {
+  userid: string;
+  name: string;
+  amount: number;
+  nextPaymentDate: string;
+  frequency: "monthly" | "yearly" | "weekly" | "quarterly";
+}
+
+declare interface getRecurringBillsProps {
   userId: string;
 }
 
-declare interface exchangePublicTokenProps {
-  publicToken: string;
-  user: User;
-}
-
-declare interface createBankAccountProps {
-  accessToken: string;
-  userId: string;
-  accountId: string;
-  bankId: string;
-  fundingSourceUrl: string;
-  sharableId: string;
-}
-
-declare interface getBanksProps {
-  userId: string;
-}
-
-declare interface getBankProps {
-  documentId: string;
-}
-
-declare interface getBankByAccountIdProps {
-  accountId: string;
-}
+declare type RecurringBillsResponse = {
+  total: number;
+  documents: RecurringBill[];
+};

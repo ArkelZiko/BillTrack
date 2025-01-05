@@ -6,18 +6,21 @@ export const sidebarLinks = [
   },
   {
     imgURL: "/icons/dollar-circle.svg",
-    route: "/my-banks",
-    label: "My Banks",
+    route: "/my-calendar",
+    label: "My Calendar",
   },
   {
     imgURL: "/icons/transaction.svg",
-    route: "/transaction-history",
-    label: "Transaction History",
+    route: "/recurring-bill-history",
+    label: "Recurring Bill History",
   },
   {
     imgURL: "/icons/money-send.svg",
-    route: "/payment-transfer",
-    label: "Transfer Funds",
+    route: "/recurring-income-history",
+    label: "Recurring Income History",
+
+    //TODO: ADD A SETTINGS COG AT THE BOTTOM
+    // --->> MAYBE ADD A DARK MODE
   },
 ];
 

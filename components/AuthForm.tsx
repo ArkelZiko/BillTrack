@@ -36,44 +36,44 @@ const AuthForm = ({ type }: { type: string }) => {
       resolver: zodResolver(formSchema),
       defaultValues: {
         email: "",
-        password: ''
+        password: '',
+        firstName: "",
+        lastName: ""
       },
     })
    
     // 2. Define a submit handler.
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-      setIsLoading(true);
-
-      try {
-        // Sign up with Appwrite & create plaid token
-        
-        if(type === 'sign-up') {
-          const userData = {
-            firstName: data.firstName!,
-            lastName: data.lastName!,
-            email: data.email,
-            password: data.password
+        setIsLoading(true);
+      
+        try {
+          if(type === 'sign-up') {
+            const userData = {
+              firstName: data.firstName!,
+              lastName: data.lastName!,
+              email: data.email,
+              password: data.password
+            }
+      
+            const newUser = await signUp(userData);
+            
+            if(newUser) router.push('/');  // Add this line to redirect after successful signup
           }
-
-          const newUser = await signUp(userData);
-
-          setUser(newUser);
+      
+          if(type === 'sign-in') {
+            const response = await signIn({
+              email: data.email,
+              password: data.password,
+            })
+      
+            if(response) router.push('/')
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
         }
-
-        if(type === 'sign-in') {
-          const response = await signIn({
-            email: data.email,
-            password: data.password,
-          })
-
-          if(response) router.push('/')
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
       }
-    }
 
   return (
     <section className="auth-form">
